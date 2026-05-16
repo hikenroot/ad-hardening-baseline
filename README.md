@@ -1,3 +1,5 @@
+> 🇬🇧 English version | 🇫🇷 [Version française](README.fr.md)
+
 # AD Hardening Baseline 🛡️
 
 **PowerShell toolkit for Active Directory security hardening — CIS Benchmark aligned**
