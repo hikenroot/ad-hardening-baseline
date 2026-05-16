@@ -2,7 +2,7 @@
 
 **Boîte à outils PowerShell pour le durcissement Active Directory — aligné CIS Benchmark**
 
-> 🇫🇷 [Version française](#) | 🇬🇧 [English version](README.en.md)
+> 🇫🇷 [Version française](#) | 🇬🇧 [English version](README.md)
 
 ---
 
