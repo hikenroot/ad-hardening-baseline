@@ -10,7 +10,7 @@
     - Group Policy Preferences (GPP) XML files (cpassword)
     
     Counters: T1552.001 (Credentials in Files), T1552.006 (Group Policy Preferences)
-    CIS Benchmark: 1.1.x — Ensure passwords are not stored in reversible encryption
+    Credential hygiene: no cleartext passwords in AD (description / SYSVOL) — MITRE T1552.001
 
 .PARAMETER DomainController
     Target Domain Controller FQDN. Defaults to current domain.

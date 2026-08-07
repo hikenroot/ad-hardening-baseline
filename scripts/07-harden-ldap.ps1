@@ -28,22 +28,20 @@ $domainDN = (Get-ADDomain).DistinguishedName
 $dsHeuristics = (Get-ADObject "CN=Directory Service,CN=Windows NT,CN=Services,CN=Configuration,$domainDN" -Properties dsHeuristics).dsHeuristics
 
 if ($dsHeuristics -and $dsHeuristics.Length -ge 7 -and $dsHeuristics[6] -eq '2') {
-    Write-Host "  [+] Anonymous LDAP bind: RESTRICTED (dsHeuristics bit 7 = 2)" -ForegroundColor Green
-} else {
-    Write-Host "  [!] Anonymous LDAP bind: ALLOWED — enumeration possible" -ForegroundColor Red
+    # 7th char (fLDAPBlockAnonOps) = 2 => anonymous LDAP operations ALLOWED (vulnerable)
+    Write-Host "  [!] Anonymous LDAP bind: ALLOWED (dsHeuristics 7th char = 2) — enumeration possible" -ForegroundColor Red
     if (-not $AuditOnly) {
         Write-Host "  [*] Setting dsHeuristics to disable anonymous LDAP..." -ForegroundColor Yellow
-        $newValue = if ($dsHeuristics) {
-            $chars = $dsHeuristics.ToCharArray()
-            while ($chars.Length -lt 7) { $chars += '0' }
-            $chars[6] = '2'
-            -join $chars
-        } else {
-            "0000002"
-        }
+        $chars = $dsHeuristics.ToCharArray()
+        while ($chars.Length -lt 7) { $chars += '0' }
+        $chars[6] = '0'   # 0 = block anonymous LDAP operations
+        $newValue = -join $chars
         Set-ADObject "CN=Directory Service,CN=Windows NT,CN=Services,CN=Configuration,$domainDN" -Replace @{dsHeuristics=$newValue}
-        Write-Host "  [+] Anonymous LDAP bind: DISABLED" -ForegroundColor Green
+        Write-Host "  [+] Anonymous LDAP bind: DISABLED (7th char set to 0)" -ForegroundColor Green
     }
+} else {
+    # 7th char absent or != 2 => anonymous operations blocked (default, secure)
+    Write-Host "  [+] Anonymous LDAP bind: RESTRICTED (default / 7th char != 2)" -ForegroundColor Green
 }
 
 # ============================================================
@@ -82,7 +80,7 @@ switch ($cbLevel) {
 
 # Summary
 Write-Host "`n[*] Summary" -ForegroundColor Cyan
-Write-Host "  Anonymous LDAP  : $(if($dsHeuristics -and $dsHeuristics.Length -ge 7 -and $dsHeuristics[6] -eq '2'){'Restricted'}else{'Allowed'})"
+Write-Host "  Anonymous LDAP  : $(if($dsHeuristics -and $dsHeuristics.Length -ge 7 -and $dsHeuristics[6] -eq '2'){'Allowed'}else{'Restricted'})"
 Write-Host "  LDAP Signing    : $(switch($signingLevel){2{'Required'}1{'Negotiated'}default{'None'}})"
 Write-Host "  Channel Binding : $(switch($cbLevel){2{'Always'}1{'When Supported'}default{'Never'}})"
 if ($AuditOnly) {

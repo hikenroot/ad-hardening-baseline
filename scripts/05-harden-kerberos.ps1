@@ -86,9 +86,10 @@ if ($rc4Users) {
     Write-Host "  [!] $($rc4Users.Count) accounts support RC4 encryption" -ForegroundColor Red
     if (-not $AuditOnly) {
         Write-Host "  [*] Forcing AES256 on Kerberoastable accounts..." -ForegroundColor Yellow
-        foreach ($u in $spnUsers) {
-            Set-ADUser -Identity $u -KerberosEncryptionType AES256
-            Write-Host "    [+] $($u.SamAccountName) → AES256 only" -ForegroundColor Green
+        Write-Host "  [i] Note: forcing AES requires a password reset to regenerate AES keys; verify no service/trust relies on RC4 first." -ForegroundColor DarkYellow
+        foreach ($u in $rc4Users) {
+            Set-ADUser -Identity $u.SamAccountName -KerberosEncryptionType AES128,AES256
+            Write-Host "    [+] $($u.SamAccountName) → AES128/AES256 (RC4 removed)" -ForegroundColor Green
         }
     }
 } else {

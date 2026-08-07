@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     Counters: T1557.001 (NTLM Relay via unsigned SMB)
-    CIS Benchmark: 2.3.8.1/2.3.8.2 — Ensure SMB signing is required
+    CIS Benchmark: 2.3.8.1/.2 (client) + 2.3.9.1/.2 (server) — Ensure SMB signing is required
     
 .PARAMETER AuditOnly
     Only check current state without making changes.

@@ -110,8 +110,8 @@ Add-AuditResult "Network Protocols" "SMBv1 disabled" `
 # ============================================================
 Write-Host "[4/8] Auditing LAPS coverage..." -ForegroundColor Yellow
 
-$allComputers = Get-ADComputer -Filter {Enabled -eq $true} -Properties ms-Mcs-AdmPwd
-$withLaps = ($allComputers | Where-Object { $_.'ms-Mcs-AdmPwd' } | Measure-Object).Count
+$allComputers = Get-ADComputer -Filter {Enabled -eq $true} -Properties ms-Mcs-AdmPwd, msLAPS-Password
+$withLaps = ($allComputers | Where-Object { $_.'ms-Mcs-AdmPwd' -or $_.'msLAPS-Password' } | Measure-Object).Count
 $totalComputers = ($allComputers | Measure-Object).Count
 $coverage = if($totalComputers -gt 0){[math]::Round($withLaps/$totalComputers*100)}else{0}
 

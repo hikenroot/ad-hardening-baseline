@@ -8,7 +8,7 @@
     credential caching. Essential for privileged accounts.
     
     Counters: T1003 (Credential Dumping), T1550 (Use Alternate Authentication Material)
-    CIS Benchmark: 1.1.6 — Ensure sensitive accounts are in Protected Users
+    AD hardening: sensitive accounts (Tier0/DA) in Protected Users — MITRE M1026 (Privileged Account Management)
 
 .PARAMETER AuditOnly
     Only check current membership without making changes.

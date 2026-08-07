@@ -63,7 +63,7 @@ Write-Host "`n[2/5] Computers with LAPS passwords..." -ForegroundColor Yellow
 
 $allComputers = Get-ADComputer -Filter {Enabled -eq $true} -Properties ms-Mcs-AdmPwd, ms-Mcs-AdmPwdExpirationTime, OperatingSystem
 $withLaps = $allComputers | Where-Object { $_.'ms-Mcs-AdmPwd' }
-$withoutLaps = $allComputers | Where-Object { -not $_.'ms-Mcs-AdmPwd' -and $_.OperatingSystem -notmatch "Domain Controller" }
+$withoutLaps = $allComputers | Where-Object { -not $_.'ms-Mcs-AdmPwd' -and $_.DistinguishedName -notmatch ',OU=Domain Controllers,' }
 
 $totalEnabled = ($allComputers | Measure-Object).Count
 $lapsCount = ($withLaps | Measure-Object).Count
@@ -118,8 +118,8 @@ if ($expiredLaps.Count -gt 0) {
 Write-Host "`n[4/5] LAPS GPO configuration..." -ForegroundColor Yellow
 
 $lapsGPOs = Get-GPO -All | Where-Object {
-    $_ | Get-GPOReport -ReportType Xml | Select-String -Pattern "LAPS|AdmPwd" -Quiet
-} -ErrorAction SilentlyContinue
+    (Get-GPOReport -Guid $_.Id -ReportType Xml) -match "LAPS|AdmPwd"
+}
 
 if ($lapsGPOs) {
     Write-Host "  [+] LAPS GPO(s) found:" -ForegroundColor Green
